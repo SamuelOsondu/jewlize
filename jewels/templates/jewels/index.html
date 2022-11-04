@@ -40,6 +40,7 @@
           <a class="navbar-brand" href="index.html">
             <img src="{% static 'jewels/images/logo.png' %}" alt="">
             <span>
+
               Lodge
             </span>
           </a>
@@ -53,16 +54,16 @@
                 <li class="nav-item active">
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="about.html"> About</a>
+                  <a class="nav-link" href="{% url 'about' %}"> About</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="jewellery.html">Jewellery </a>
+                  <a class="nav-link" href="{% url 'jewellery' %}">Jewellery </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="contact.html">Contact us</a>
+                  <a class="nav-link" href="{% url 'contact' %}">Contact us</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#">Login</a>
+                  <a class="nav-link" href="{% url 'login' %}">Login</a>
                 </li>
               </ul>
 
@@ -83,10 +84,11 @@
       </div>
     </header>
     <!-- end header section -->
+
     <!-- slider section -->
     <section class=" slider_section position-relative">
       <div class="design-box">
-        <img src="{% static 'images/design-1.png' %}" alt="">
+        <img src="{% static 'jewels/images/design-1.png' %}" alt="">
       </div>
       <div class="slider_number-container d-none d-md-block">
         <div class="number-box">
