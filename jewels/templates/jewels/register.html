@@ -6,16 +6,6 @@
 <html>
 
 <head>
-  <!-- Basic -->
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <!-- Mobile Metas -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <!-- Site Metas -->
-  <meta name="keywords" content="" />
-  <meta name="description" content="" />
-  <meta name="author" content="" />
-
   <title>Lodge</title>
 
   <!-- slider stylesheet -->
@@ -49,7 +39,9 @@
     <div class="container">
       <div class="row">
         <div class="col-md-6">
-          <form action="">
+
+          <form method="POST">
+			  {% csrf_token %}
             <div>
               <input type="text" placeholder="Name" />
             </div>
@@ -63,7 +55,7 @@
               Already have an account? <a href="{% url 'login' %}">Login Here</a>
             </p>
             <div class="d-flex ">
-              <button>
+              <button type="submit">
                 REGISTER
               </button>
             </div>
