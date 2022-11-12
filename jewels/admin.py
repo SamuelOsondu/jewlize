@@ -1,8 +1,9 @@
 from django.contrib import admin
 
-from .models import Item
+from .models import *
 
 # Register your models here.
+
 
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug')
@@ -10,4 +11,9 @@ class ItemAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
-admin.site.register(Item, ItemAdmin)
+admin.site.register(Item)
+admin.site.register(Customer)
+admin.site.register(Cart)
+admin.site.register(CartItem)
+admin.site.register(ShippingAddress)
+

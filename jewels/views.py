@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from .models import Item
-# Create your views here.
-
 from django.contrib.auth.forms import AuthenticationForm #add this
 from django.contrib.auth import login, authenticate, logout  # add this
 from django.shortcuts import  render, redirect
 from .forms import NewUserForm
 from django.contrib.auth import login
 from django.contrib import messages
+
+
+# Create your views here.
 
 def register(request):
 	if request.method == "POST":
@@ -53,6 +54,11 @@ def index(request):
 
 
 def about(request):
+	return render(request, 'jewels/about.html')
+
+
+def cart(request):
+	if request.user_is_authenticated
 	return render(request, 'jewels/about.html')
 
 
