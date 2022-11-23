@@ -1,4 +1,5 @@
 {% load static %}
+{% load crispy_forms_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -36,16 +37,18 @@
     <div class="container">
       <div class="row">
         <div class="col-md-6">
-          <form method="POST">
+
+          <form method="POST"  role="form" action="{% url 'login' %}">
+
             {% csrf_token %}
-            <div>
-              <input type="email" placeholder="Email" />
-            </div>
-            <div>
-              <input type="password" placeholder="Password" />
-            </div>
-            <p>
-              You don't have an account yet? <a href="{% url 'register' %}">Register Here</a>
+
+            {% for message in messages %}
+                <div class="alert alert-info">{{message}}</div>
+            {% endfor %}
+
+            {{ login_form|crispy }}
+
+            <p>You don't have an account yet? <a href="{% url 'register' %}"> Register Here</a>
             </p>
 
             <div class="d-flex ">

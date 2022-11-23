@@ -7,8 +7,13 @@ from django.contrib.auth.models import User
 
 
 class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=50)
+    user = models.OneToOneField(User,
+                                on_delete=models.CASCADE,
+                                null=True,
+                                blank=True,
+                                related_name="customer"
+                                )
+    name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     phone = models.CharField(max_length=10)
     email = models.EmailField()
@@ -33,6 +38,12 @@ class Cart(models.Model):
     cart_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     completed = models.BooleanField(default=False)
 
+    @property
+    def get_cart_total(self):
+        cart_items = self.cartitems_set.all()
+        total = sum([item.get_total for item in cart_items])
+        return total
+
     def __str__(self):
         return f'{self.id}'
 
@@ -41,6 +52,11 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=0)
+
+    @property
+    def get_total(self):
+        total = self.quantity * self.product.price
+        return total
 
     def __str__(self):
         return f'{self.item.name}'
@@ -56,43 +72,4 @@ class ShippingAddress(models.Model):
 
     def __str__(self):
         return f'{self.address}'
-
-
-#
-# class Category(models.Model):
-#     name = models.CharField(max_length=50)
-#
-#     @staticmethod
-#     def get_all_categories():
-#         return Category.objects.all()
-#
-#     def __str__(self):
-#         return self.name
-#
-
-#
-# class Products(models.Model):
-#     name = models.CharField(max_length=60)
-#     price = models.IntegerField(default=0)
-#     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
-#     description = models.CharField(
-#         max_length=250, default='', blank=True, null=True)
-#     image = models.ImageField(upload_to='uploads/products/')
-#
-#     @staticmethod
-#     def get_products_by_id(ids):
-#         return Products.objects.filter(id__in=ids)
-#
-#     @staticmethod
-#     def get_all_products():
-#         return Products.objects.all()
-#
-#     @staticmethod
-#     def get_all_products_by_categoryid(category_id):
-#         if category_id:
-#             return Products.objects.filter(category=category_id)
-#         else:
-#             return Products.get_all_products()
-#
-#
 
