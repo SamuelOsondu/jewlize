@@ -14,13 +14,10 @@ class Customer(models.Model):
                                 related_name="customer"
                                 )
     name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    phone = models.CharField(max_length=10)
     email = models.EmailField()
-    password = models.CharField(max_length=100)
 
     def __str__(self):
-        return f'{self.first_name}'
+        return f'{self.name}'
 
 
 class Item(models.Model):
@@ -40,7 +37,7 @@ class Cart(models.Model):
 
     @property
     def get_cart_total(self):
-        cart_items = self.cartitems_set.all()
+        cart_items = self.cartitem_set.all()
         total = sum([item.get_total for item in cart_items])
         return total
 

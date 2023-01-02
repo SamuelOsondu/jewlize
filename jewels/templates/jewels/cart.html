@@ -87,7 +87,7 @@
 
   <!-- cart section -->
 
-        {% for item in cart_items %}
+        {% for item in cart_item %}
         <tr>
           <td class="product-thumbnail">
             <img src="{{item.item.item_img.url}}" alt="Image" class="img-fluid">
@@ -220,7 +220,7 @@
   <script type="text/javascript" src="{% static 'jewels/js/jquery-3.4.1.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'jewels/js/bootstrap.js' %}"></script>
   <script type="text/javascript" src="{% static 'jewels/js/custom.js' %}"></script>
-
+  <script type="text/javascript" src="{% static 'jewels/js/cart.js' %} "></script>
 </body>
 
 </html>

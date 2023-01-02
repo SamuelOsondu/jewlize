@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+import json
 
 from .models import Item, Cart, Customer
 from django.contrib.auth.forms import AuthenticationForm #add this
@@ -27,7 +28,7 @@ def register(request):
 			)
 			login(request, user)
 			messages.success(request, "Registration successful." )
-			return redirect(reverse("jewels:index.html"))
+			return redirect("jewels:index.html")
 		messages.error(request, form.errors)
 	form = NewUserForm()
 	return render(request, "jewels/register.html", {"register_form":form})
@@ -67,9 +68,13 @@ def index(request):
 def cart(request):
 	if request.user.is_authenticated:
 		customer = request.user.customer
-		cart, created = Cart.object.get_or_create(customer=customer, completed=False)
-		cart_items = cart.cartitem_set.all()
-		return render(request, 'jewels/cart.html', {'cart_items': cart_items})
+		cart, created = Cart.objects.get_or_create(customer=customer, completed=False)
+		cartitem = cart.cartitem_set.all()
+	else:
+		cartitem = []
+		cart = {"get_cart_total": 0, "get_itemtotal": 0}
+
+	return render(request, 'jewels/cart.html', {'cartitem': cartitem, 'cart': cart})
 
 
 def contact(request):
@@ -80,3 +85,28 @@ def jewellery(request):
 	items = Item.objects.all()
 	return render(request, 'jewels/jewellery.html', {'items': items})
 
+
+def update_item(request):
+	data = json.loads(request.data)
+	productId = data['productId']
+	action = data['action']
+
+	print('Action:', action)
+	print('productId:', productId)
+
+	customer = request.user.customer
+	item = Item.objects.get(id=productId)
+	cart, created = Cart.objects.get_or_create(customer=customer, completed=False)
+
+	cartitem, created = Item.objects.get_or_create(cart=cart, item=item)
+
+	if action == 'add':
+		cartitem.quantity = (cartitem.quantity + 1)
+	elif action == 'remove':
+		cartitem.quantity = (cartitem.quantity - 1)
+	cartitem.save()
+
+	if cartitem.quuantity <= 0:
+		cartitem.delete()
+		
+	return JsonResponse('Item was added', safe=False)
