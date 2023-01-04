@@ -30,19 +30,28 @@ class Item(models.Model):
         return f'{self.name} - {self.slug}'
 
 
+# class Cart(models.Model):
+#     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+#     cart_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+#     completed = models.BooleanField(default=False)
+#
+#     @property
+#     def get_cart_total(self):
+#         cart_items = self.cartitem_set.all()
+#         total = sum([item.get_total for item in cart_items])
+#         return total
+#
+#     def __str__(self):
+#         return f'{self.id}'
+#
+from django.db import models
+
 class Cart(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    cart_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    completed = models.BooleanField(default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    @property
-    def get_cart_total(self):
-        cart_items = self.cartitem_set.all()
-        total = sum([item.get_total for item in cart_items])
-        return total
-
-    def __str__(self):
-        return f'{self.id}'
 
 
 class CartItem(models.Model):
