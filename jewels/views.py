@@ -86,27 +86,74 @@ def jewellery(request):
     return render(request, 'jewels/jewellery.html', {'items': items})
 
 
-def update_item(request):
-    data = json.loads(request.data)
-    productId = data['productId']
-    action = data['action']
+from django.shortcuts import HttpResponseRedirect
 
-    print('Action:', action)
-    print('productId:', productId)
+def add_to_cart(request, product_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
 
-    customer = request.user.customer
-    item = Item.objects.get(id=productId)
-    cart, created = Cart.objects.get_or_create(customer=customer, completed=False)
+    try:
+        product = Item.objects.get(id=product_id)
+    except Item.DoesNotExist:
+        messages.error(request, 'Product does not exist')
+        return redirect('product_list')
 
-    cartitem, created = CartItem.objects.get_or_create(cart=cart, item=item)
+    try:
+        cart_entry = Cart.objects.get(user=request.user, product=product)
+        cart_entry.quantity += 1
+        cart_entry.save()
+    except Cart.DoesNotExist:
+        Cart.objects.create(user=request.user, product=product, quantity=1)
 
-    if action == 'add':
-        cartitem.quantity = (cartitem.quantity + 1)
-    elif action == 'remove':
-        cartitem.quantity = (cartitem.quantity - 1)
-    cartitem.save()
+    messages.success(request, 'Product added to cart')
 
-    if cartitem.quuantity <= 0:
-        cartitem.delete()
+    next = request.POST.get('next', request.GET.get('next'))
+    if next:
+        return redirect(next)
+    else:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-    return JsonResponse('Item was added', safe=False)
+
+def update_cart(request, product_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    try:
+        product = Item.objects.get(id=product_id)
+    except Item.DoesNotExist:
+        messages.error(request, 'Product does not exist')
+        return redirect('view_cart')
+
+    try:
+        cart_entry = Cart.objects.get(user=request.user, product=product)
+    except Cart.DoesNotExist:
+        messages.error(request, 'Product not in cart')
+        return redirect('view_cart')
+
+    cart_entry.quantity = request.POST['quantity']
+    cart_entry.save()
+
+    return redirect('view_cart')
+
+
+def delete_from_cart(request, product_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    try:
+        product = Item.objects.get(id=product_id)
+    except Item.DoesNotExist:
+        messages.error(request, 'Product does not exist')
+        return redirect('view_cart')
+
+    try:
+        cart_entry = Cart.objects.get(user=request.user, product=product)
+    except Cart.DoesNotExist:
+        messages.error(request, 'Product not in cart')
+        return redirect('view_cart')
+
+    cart_entry.delete()
+
+    return redirect('view_cart')
+
+
